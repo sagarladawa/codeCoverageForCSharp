@@ -1,0 +1,101 @@
+###################################################################################################
+    All LXX - Line references below are made with respect the provided CSProj.Tests.csproj file
+###################################################################################################
+
+The setup done here results in following:
+xUnit 2.2.0+, Coverlet 6.0.0+ integrated CS Project.
+After build, when GenerateTestCoverageReport.ps1 is ran;
+  Following is the file structure created;
+    |_GenerateTestCoverageReport.ps1
+    |_TestCoverageReport
+      |_TestCoverageReport.html.lnk (.lnk is nothing but shortcut, it does not reflect in Explorer)
+      |_Coverage
+        |_(All coverlet generated files are here, especially the main index.html)
+  To understand a bit about GenerateTestCoverageReport also go through the ReadmeFirst.md
+
+Coverlet is also compatible with NUnit, MSTest.
+
+___________________________________________________________________________________________________
+
+[IF] Add Code Coverage to existing Project
+
+#1
+You project needs to be updated to .NET 5.0
+  Reflected as L03-L11. You can edit the same in your csproj opening in notepad.
+
+#2
+Copy paste the following lines to your .csproj
+~~~
+  <ItemGroup>
+    <Compile Remove="TestCoverageReport\**" />
+    <EmbeddedResource Remove="TestCoverageReport\**" />
+    <None Remove="TestCoverageReport\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+~~~
+First ItemGroup is to exclude the TestCoverageReport folder which is generated from Solution Explorer view.
+The files still exist but will just not be visible in VS.
+
+Second ItemGroup will automatically add the xUnit and Coverlet dependencies which are fetched through nuget.
+
+#3
+Direct Project reference may mostly result in dependency issues.
+The Project you are testing for SHOULD be added as reference to the Test Project.
+  To do so, just "Add Reference" in Project and "Browse" to your dll.
+    This is reflected as L36-L41
+
+#4 - GOOD TO HAVE
+L43-L46 You can add these to you .csproj file.
+  They will smartly clean the report files generated when you clean solution in VS.
+
+#5 IMP
+Update GenerateTestCoverageReport.ps1 L16 - Replace CSProj.Tests.dll with your Test dll.
+  ITS TEST DLL and not Main Project DLL!!!
+
+___________________________________________________________________________________________________
+
+[IF] Add the provided CSProj.Tests to Solution
+
+1. Copy paste the Project.
+2. Rename as needed. Renaming changes given at last.
+3. Right-click on Solution and "Add Existing Project"
+Update dependencies as necessary. Details mentioned above.
+
+___________________________________________________________________________________________________
+
+!!! MAKING CHANGES !!!
+
+[RENAMING CHANGES]:
+Necessary changes you may NEED to do IF RENAMING:
+1. Rename Proj Folder
+2. Rename .csproj file
+   Open .csproj file (notepad)
+3. Namespace changes in Tests file (This is sample though, just to check)
+
+[OUTPUT PATH CHANGES]: Proceed if really very confident as it is difficult to experiment yet possible.
+Necessary changes you may NEED to do IF OUTPUT PATH changed:
+1. Update path in L13-L17, L43-L46 of Tests.csproj
+2. Update path in GenerateTestCoverageReport.ps1
+   Refer the project structure as mentioned above.
+   Whatever path changes you want to make, do them in this file respectively.
+
+___________________________________________________________________________________________________
+
+HAPPY EXPERIMENTING...
+___________________________________________________________________________________________________
